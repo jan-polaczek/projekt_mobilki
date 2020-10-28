@@ -33,11 +33,10 @@ function listenFormFieldRegular(target) {
 function listenFormFieldLogin(target) {
     if (target.value.length > 0) {
         $.get(loginAvailabilityUrl + target.value, (result, status) => {
-            console.log(result[target.value]);
             if (status !== 'success') {
                 addOrChangeInvalidFlag(target, 'Błąd połączenia z serwerem.');
             } else {
-                if (result[target.value] !== 'available') {
+                if (result[target.value] !== 'available' && result[target.value] !== undefined) {
                     addOrChangeInvalidFlag(target, 'Nazwa użytkownika zajęta.');
                 } else {
                     if (!isValid('login', target.value)) {
