@@ -59,7 +59,7 @@ function removeInvalidFlag(target) {
 function addOrChangeInvalidFlag(target, msg) {
     if (!target.classList.contains('is-invalid')) {
             target.classList.add('is-invalid');
-            $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${message}</div>`);
+            $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${msg}</div>`);
     } else {
         $('.invalid' + target.id).text(msg);
     }
