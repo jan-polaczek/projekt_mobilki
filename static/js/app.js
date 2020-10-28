@@ -15,10 +15,12 @@ function setupFormListeners() {
 function listenFormField(e) {
     const target = e.target;
     if (!isValid(target.id, target.value)) {
+        const message = getInvalidMessage(target.id);
         if (!target.classList.contains('is-invalid')) {
-            const message = getInvalidMessage(target.id);
             target.classList.add('is-invalid');
             $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${message}</div>`);
+        } else if (target.id === 'login') {
+            $('.invalid-'+target.id).text(message);
         }
     } else {
         if (target.id === 'login') {
