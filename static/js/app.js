@@ -21,12 +21,16 @@ function listenFormField(e) {
             $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${message}</div>`);
         }
     } else {
-        if (target.id === 'login' && !target.classList.contains('is-invalid')) {
+        if (target.id === 'login') {
             $.get(loginAvailabilityUrl + target.value, (result, status) => {
                 if (status === 'success') {
                     if (result[target.value] !== 'available') {
-                        target.classList.add('is-invalid');
-                        $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta.</div>`);
+                        if (target.classList.contains('is-invalid')) {
+                            $('.invalid-'+target.id).text('Nazwa użytkownika jest już zajęta.');
+                        } else {
+                            target.classList.add('is-invalid');
+                            $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta.</div>`);
+                        }
                     } else {
                         removeInvalidFlag(target);
                     }
