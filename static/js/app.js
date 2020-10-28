@@ -22,8 +22,8 @@ function listenFormField(e) {
         }
     } else {
         if (target.id === 'login') {
-            $.get(loginAvailabilityUrl + target.value, (result) => {
-                console.log(result.status);
+            $.get(loginAvailabilityUrl + target.value, (result, status) => {
+                console.log(status);
                 if (result[target.value] !== 'available') {
                     target.classList.add('is-invalid');
                     $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta!</div>`);
