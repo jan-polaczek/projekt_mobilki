@@ -31,21 +31,25 @@ function listenFormFieldRegular(target) {
 }
 
 function listenFormFieldLogin(target) {
-    $.get(loginAvailabilityUrl + target.value, (result, status) => {
-        if (status !== 'success') {
-            addOrChangeInvalidFlag(target, 'Błąd połączenia z serwerem.');
-        } else {
-            if (result[target.value] !== 'available') {
-                addOrChangeInvalidFlag(target, 'Nazwa użytkownika zajęta.');
+    if (target.value.length > 0) {
+        $.get(loginAvailabilityUrl + target.value, (result, status) => {
+            if (status !== 'success') {
+                addOrChangeInvalidFlag(target, 'Błąd połączenia z serwerem.');
             } else {
-                if (!isValid('login', target.value)) {
-                    addOrChangeInvalidFlag(target, getInvalidMessage('login'));
+                if (result[target.value] !== 'available') {
+                    addOrChangeInvalidFlag(target, 'Nazwa użytkownika zajęta.');
                 } else {
-                    removeInvalidFlag(target);
+                    if (!isValid('login', target.value)) {
+                        addOrChangeInvalidFlag(target, getInvalidMessage('login'));
+                    } else {
+                        removeInvalidFlag(target);
+                    }
                 }
             }
-        }
-    });
+        });
+    } else {
+        removeInvalidFlag(target);
+    }
 }
 
 function removeInvalidFlag(target) {
@@ -61,7 +65,7 @@ function addOrChangeInvalidFlag(target, msg) {
             target.classList.add('is-invalid');
             $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${msg}</div>`);
     } else {
-        $('.invalid' + target.id).text(msg);
+        $('.invalid-' + target.id).text(msg);
     }
 }
 
