@@ -32,21 +32,22 @@ function listenFormFieldRegular(target) {
 
 function listenFormFieldLogin(target) {
     if (target.value.length > 0) {
-        $.get(loginAvailabilityUrl + target.value, (result, status) => {
-            if (status !== 'success') {
-                addOrChangeInvalidFlag(target, 'Błąd połączenia z serwerem.');
-            } else {
-                if (result[target.value] !== 'available' && result[target.value] !== undefined) {
-                    addOrChangeInvalidFlag(target, 'Nazwa użytkownika zajęta.');
+        $.get(loginAvailabilityUrl + target.value)
+            .always((result, status) => {
+                if (status !== 'success') {
+                    addOrChangeInvalidFlag(target, 'Błąd połączenia z serwerem.');
                 } else {
-                    if (!isValid('login', target.value)) {
-                        addOrChangeInvalidFlag(target, getInvalidMessage('login'));
+                    if (result[target.value] !== 'available' && result[target.value] !== undefined) {
+                        addOrChangeInvalidFlag(target, 'Nazwa użytkownika zajęta.');
                     } else {
-                        removeInvalidFlag(target);
+                        if (!isValid('login', target.value)) {
+                            addOrChangeInvalidFlag(target, getInvalidMessage('login'));
+                        } else {
+                            removeInvalidFlag(target);
+                        }
                     }
                 }
-            }
-        });
+            });
     } else {
         removeInvalidFlag(target);
     }
