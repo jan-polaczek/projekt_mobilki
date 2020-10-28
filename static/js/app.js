@@ -33,6 +33,7 @@ function listenFormFieldRegular(target) {
 function listenFormFieldLogin(target) {
     if (target.value.length > 0) {
         $.get(loginAvailabilityUrl + target.value, (result, status) => {
+            console.log(result[target.value]);
             if (status !== 'success') {
                 addOrChangeInvalidFlag(target, 'Błąd połączenia z serwerem.');
             } else {
