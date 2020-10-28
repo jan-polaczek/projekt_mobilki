@@ -20,7 +20,7 @@ function listenFormField(e) {
         }
     } else {
         if (target.id === 'login') {
-            $.get(loginAvailabilityUrl + '/' + value, (result) => {
+            $.get(loginAvailabilityUrl + '/' + target.value, (result) => {
                 if (!result['available']) {
                     target.classList.add('is-invalid');
                     $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta!</div>`);
@@ -79,9 +79,4 @@ function getInvalidMessage(fieldType) {
     } else {
         return 'Niewłaściwa wartość pola.'
     }
-}
-
-function checkLoginAvailability(value) {
-    console.log('checking...');
-    return true;
 }
