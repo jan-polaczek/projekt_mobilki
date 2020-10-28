@@ -3,6 +3,8 @@ const loginAvailabilityUrl = 'https://infinite-hamlet-29399.herokuapp.com/check/
 $(document).ready(() => {
     setupFormListeners();
     loadJoke();
+    showMessage();
+    showShipmentInfo();
 });
 
 function setupFormListeners() {
@@ -59,6 +61,8 @@ function isValid(fieldType, value) {
         return value.match(new RegExp(`[A-Z${plUppercase}][a-z${plLowercase}]+`));
     } else if (fieldType === 'password') {
         return value.trim().match(/.{8,}/);
+    } else if (fieldType === 'password_repeat') {
+        return value === $('#password').val();
     } else if (fieldType === 'login') {
         return value.match(/[a-z]{3,12}/);
     } else if (fieldType === 'sex') {
@@ -74,10 +78,44 @@ function getInvalidMessage(fieldType) {
     } else if (fieldType === 'lastname') {
         return 'Nazwisko powinno zaczynać się dużą literą.';
     } else if (fieldType === 'password') {
-        return 'Hasło musi zawierać co najmniej 8 znaków';
+        return 'Hasło musi zawierać co najmniej 8 znaków.';
+    } else if (fieldType === 'password_repeat') {
+        return 'Hasła muszą być takie same.';
     } else if (fieldType === 'login') {
         return 'Długość nazwy użytkownika musi zawierać się w przedziale od 3 do 12 znaków.'
     } else {
         return 'Niewłaściwa wartość pola.'
     }
+}
+
+function showMessage() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if (urlParams.has('msg-content') && urlParams.has('email')) {
+        const msg = urlParams.get('msg-content');
+        const email = urlParams.get('email');
+        showAlert(`Wysłano wiadomość z adresu ${email}:`, msg, 'success');
+    }
+}
+
+function showShipmentInfo() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if (urlParams.has('shipment_number')) {
+        const shipmentNumber = urlParams.get('shipment_number');
+        showAlert(`Status paczki o numerze: ${shipmentNumber}:`, 'Nie znaleziono.', 'danger');
+    }
+}
+
+function showAlert(header, content, alertStatus) {
+    const messageContainer = document.createElement('div');
+        messageContainer.className = "alert alert-" + alertStatus;
+        const messageHeader = document.createElement('b');
+        messageHeader.innerText = header;
+        const messageContent = document.createElement('div');
+        messageContent.innerText = content;
+        messageContainer.appendChild(messageHeader);
+        messageContainer.appendChild(messageContent);
+        $('.container-fluid').append(messageContainer);
+        $(messageContainer).fadeOut(4000);
 }
