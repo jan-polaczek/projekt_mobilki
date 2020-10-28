@@ -3,7 +3,7 @@
 {% block content %}
     <div class="text-center">
         <h2>Zarejestruj się</h2>
-        <form action="https://infinite-hamlet-29399.herokuapp.com/sender/register" method="post" class="text-center w-50">
+        <form action="https://infinite-hamlet-29399.herokuapp.com/sender/register" method="post" class="text-center w-50" enctype="multipart/form-data">
         <ul>
             <li class="form-group my-3">
                 <label for="login" class="sr-only">Nazwa użytkownika</label>
@@ -33,8 +33,8 @@
                 </select>
             </li>
             <li class="form-group my-3">
-                <label for="picture">Zdjęcie</label>
-                <input type="file" id="picture" name="picture" accept=".png,.jpg">
+                <label for="photo">Zdjęcie</label>
+                <input type="file" id="photo" name="photo" accept=".png,.jpg">
             </li>
             <input type="submit" value="Załóż konto" class="btn btn-primary">
         </ul>

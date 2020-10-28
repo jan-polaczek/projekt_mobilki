@@ -21,21 +21,31 @@ function listenFormField(e) {
             $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${message}</div>`);
         }
     } else {
-        if (target.id === 'login') {
+        if (target.id === 'login' && !target.classList.contains('is-invalid')) {
             $.get(loginAvailabilityUrl + target.value, (result, status) => {
-                console.log(status);
-                if (result[target.value] !== 'available') {
+                if (status === 'success') {
+                    if (result[target.value] !== 'available') {
+                        target.classList.add('is-invalid');
+                        $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta.</div>`);
+                    } else {
+                        removeInvalidFlag(target);
+                    }
+                } else {
                     target.classList.add('is-invalid');
-                    $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta!</div>`);
+                    $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Błąd polączenia z serwerem.</div>`);
                 }
             });
         }
-        target.classList.remove('is-invalid');
+        removeInvalidFlag(target);
+    }
+}
+
+function removeInvalidFlag(target) {
+    target.classList.remove('is-invalid');
         $(`.invalid-${target.id}`).remove();
         if (target.value.length > 0) {
             target.classList.add('is-valid');
         }
-    }
 }
 
 function listenFormSubmit(e) {
