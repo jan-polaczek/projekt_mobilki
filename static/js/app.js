@@ -14,38 +14,38 @@ function setupFormListeners() {
 
 function listenFormField(e) {
     const target = e.target;
+    if (target.id === 'login') {
+        listenFormFieldLogin(target);
+    } else {
+        listenFormFieldRegular(target);
+    }
+}
+
+function listenFormFieldRegular(target) {
     if (!isValid(target.id, target.value)) {
         const message = getInvalidMessage(target.id);
-        if (!target.classList.contains('is-invalid')) {
-            target.classList.add('is-invalid');
-            $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${message}</div>`);
-        } else if (target.id === 'login') {
-            $('.invalid-'+target.id).text(message);
-        }
+        addOrChangeInvalidFlag(target, message);
     } else {
-        if (target.id === 'login') {
-            $.get(loginAvailabilityUrl + target.value, (result, status) => {
-                if (status === 'success') {
-                    if (result[target.value] !== 'available') {
-                        if (target.classList.contains('is-invalid')) {
-                            $('.invalid-'+target.id).text('Nazwa użytkownika jest już zajęta.');
-                        } else {
-                            target.classList.add('is-invalid');
-                            $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta.</div>`);
-                        }
-                    } else {
-                        removeInvalidFlag(target);
-                    }
-                } else {
-                    target.classList.add('is-invalid');
-                    $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Błąd polączenia z serwerem.</div>`);
-                }
-            });
-        }
-        else {
-            removeInvalidFlag(target);
-        }
+        removeInvalidFlag(target);
     }
+}
+
+function listenFormFieldLogin(target) {
+    $.get(loginAvailabilityUrl + target.value, (result, status) => {
+        if (status !== 'success') {
+            addOrChangeInvalidFlag(target, 'Błąd połączenia z serwerem.');
+        } else {
+            if (result[target.value] !== 'available') {
+                addOrChangeInvalidFlag(target, 'Nazwa użytkownika zajęta.');
+            } else {
+                if (!isValid('login', target)) {
+                    addOrChangeInvalidFlag(target, getInvalidMessage('login'));
+                } else {
+                    removeInvalidFlag(target);
+                }
+            }
+        }
+    });
 }
 
 function removeInvalidFlag(target) {
@@ -54,6 +54,15 @@ function removeInvalidFlag(target) {
         if (target.value.length > 0) {
             target.classList.add('is-valid');
         }
+}
+
+function addOrChangeInvalidFlag(target, msg) {
+    if (!target.classList.contains('is-invalid')) {
+            target.classList.add('is-invalid');
+            $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">${message}</div>`);
+    } else {
+        $('.invalid' + target.id).text(msg);
+    }
 }
 
 function listenFormSubmit(e) {
