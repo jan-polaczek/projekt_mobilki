@@ -1,4 +1,4 @@
-const loginAvailabilityUrl = 'https://infinite-hamlet-29399.herokuapp.com/check/%3Cusername%3E';
+const loginAvailabilityUrl = 'https://infinite-hamlet-29399.herokuapp.com/check/';
 
 $(document).ready(() => {
     setupFormListeners();
@@ -20,7 +20,8 @@ function listenFormField(e) {
         }
     } else {
         if (target.id === 'login') {
-            $.get(loginAvailabilityUrl + '/' + target.value, (result) => {
+            $.get(loginAvailabilityUrl + target.value, (result) => {
+                console.log(result);
                 if (!result['available']) {
                     target.classList.add('is-invalid');
                     $(target.parentElement).append(`<div class="invalid-feedback invalid-${target.id}">Nazwa użytkownika jest już zajęta!</div>`);
