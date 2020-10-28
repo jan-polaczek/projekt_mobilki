@@ -38,7 +38,7 @@ function listenFormFieldLogin(target) {
             if (result[target.value] !== 'available') {
                 addOrChangeInvalidFlag(target, 'Nazwa użytkownika zajęta.');
             } else {
-                if (!isValid('login', target)) {
+                if (!isValid('login', target.value)) {
                     addOrChangeInvalidFlag(target, getInvalidMessage('login'));
                 } else {
                     removeInvalidFlag(target);
