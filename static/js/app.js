@@ -36,7 +36,9 @@ function listenFormField(e) {
                 }
             });
         }
-        removeInvalidFlag(target);
+        else {
+            removeInvalidFlag(target);
+        }
     }
 }
 
