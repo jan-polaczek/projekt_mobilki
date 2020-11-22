@@ -1,13 +1,14 @@
 {% extends 'layout.html' %}
 {% block title %}Rejestracja{% endblock %}
+{% block head %}<script src="{{ url_for('static', filename='js/register.js') }}"></script>{% endblock %}
 {% block content %}
     <div class="text-center">
         <h2>Zarejestruj się</h2>
-        <form action="https://infinite-hamlet-29399.herokuapp.com/sender/register" method="post" class="text-center w-50" enctype="multipart/form-data">
+        <form action="register" method="post" class="text-center w-50" enctype="multipart/form-data">
         <ul>
             <li class="form-group my-3">
-                <label for="login" class="sr-only">Nazwa użytkownika</label>
-                <input type="text" id="login" name="login" autocomplete="username" class="form-control" placeholder="Nazwa użytkownika" required minlength="3" maxlength="12">
+                <label for="username" class="sr-only">Nazwa użytkownika</label>
+                <input type="text" id="username" name="username" autocomplete="username" class="form-control" placeholder="Nazwa użytkownika" required minlength="3" maxlength="12">
             </li>
             <li class="form-group my-3">
                 <label for="firstname" class="sr-only">Imię</label>
@@ -26,15 +27,8 @@
                 <input type="password" id="password_repeat" name="password_repeat" autocomplete="new-password" class="form-control" placeholder="Powtórz hasło" required minlength="8">
             </li>
             <li class="form-group my-3">
-                <label for="sex">Płeć</label>
-                <select id="sex" name="sex">
-                    <option value="F">Kobieta</option>
-                    <option value="M">Mężczyzna</option>
-                </select>
-            </li>
-            <li class="form-group my-3">
-                <label for="photo">Zdjęcie</label>
-                <input type="file" id="photo" name="photo" accept=".png,.jpg" required>
+                <label for="address" class="sr-only">Adres</label>
+                <input type="text" id="address" name="address" autocomplete="address" class="form-control" placeholder="Adres" required>
             </li>
             <input type="submit" value="Załóż konto" class="btn btn-primary">
         </ul>

@@ -1,2 +1,6 @@
 Flask
 gunicorn
+redis
+python-dotenv
+bcrypt
+pyopenssl

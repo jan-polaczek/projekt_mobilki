@@ -2,36 +2,12 @@
 {% block title %}Strona główna{% endblock %}
 {% block content %}
     <div class="row">
-        <section class="col-md joke-container">
-            <h3>Twój losowy żart na dzisiaj:</h3>
-        </section>
-        <section id="tracking" class="col-md">
-            <h2>Śledź przesyłkę</h2>
-            <form id="tracking-form" class="w-100">
-                <label for="shipment_number" class="sr-only">Numer przesyłki</label>
-                <input type="text" id="shipment_number" name="shipment_number" class="form-control form-group" placeholder="Podaj numer przesyłki" minlength="10" maxlength="10" required>
-                <input type="submit" value="Szukaj" class="btn btn-dark">
-            </form>
-        </section>
         <section class="col-md">
-            <h2>Skontaktuj się z nami!</h2>
-            <form class="w-100">
-                <label for="email" class="sr-only">Email</label>
-                <input type="email" id="email" name="email" class="form-control form-group" placeholder="Adres email" required>
-
-                <label for="msg-content" class="sr-only">Treść wiadomości</label>
-                <textarea id="msg-content" name="msg-content" class="form-control form-group" placeholder="Wiadomość..." required></textarea>
-
-                <input type="submit" value="Wyślij" class="btn btn-dark">
-            </form>
-        </section>
-    </div>
-    <div class="row">
-        <section class="col-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam turpis eros, fermentum ac eros quis, tristique imperdiet neque. Pellentesque a nisi non odio convallis laoreet ullamcorper nec leo. Pellentesque in purus at velit facilisis feugiat vel id urna. Etiam tristique urna nec felis egestas, quis gravida diam lacinia. Sed ac ipsum gravida, imperdiet leo ultrices, fringilla elit. Phasellus blandit eget elit eget fringilla. Duis in nulla sed arcu bibendum venenatis. Nam imperdiet est neque, vel lacinia justo accumsan eget. Nunc consectetur auctor tempor. Vivamus ac ex placerat, rhoncus elit id, tincidunt ipsum. In a lectus ut augue vestibulum aliquet. Sed ut dui ut odio aliquet tristique sit amet sed nibh. In dignissim porta arcu, sit amet hendrerit tortor tincidunt ac.
-        </section>
-        <section class="col-md">
-            Suspendisse pulvinar luctus suscipit. Quisque vestibulum tempor arcu, vel pharetra magna sagittis vel. Sed vehicula, purus tempus pellentesque rhoncus, odio velit gravida felis, vitae dapibus lectus risus et magna. Vivamus suscipit, sem et ornare consequat, velit elit facilisis quam, vitae lobortis urna ex ut est. Duis sem nisi, eleifend et mattis eu, dapibus sed purus. Proin ornare, lectus sit amet lacinia tincidunt, eros nisi dignissim elit, ac gravida nunc libero nec arcu. Sed faucibus tristique arcu mattis euismod. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce eu porta mauris, ut pretium quam. Praesent et ornare arcu. Vivamus eu augue eget ligula iaculis convallis.
+            {% if logged_in %}
+                <h3>Witaj, {{ user['firstname'] }}!</h3>
+            {% else %}
+                <h3>Witaj!</h3>
+            {% endif %}
         </section>
     </div>
 {% endblock %}
