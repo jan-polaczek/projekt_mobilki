@@ -1,13 +1,15 @@
-from redis import Redis, from_url, exceptions
+from redis import Redis, exceptions
 import os
 
 
 class RedisDAO:
     def connect(self):
-        if os.environ.get('REDIS_URL'):
-            return from_url(os.environ.get('REDIS_URL'))
+        if os.environ.get('REDIS_PASSWORD'):
+            return Redis(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'),
+                         password=os.environ.get('REDIS_PASSWORD'), decode_responses=True, charset="utf-8")
         else:
-            return Redis(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'), decode_responses=True, charset="utf-8")
+            return Redis(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'),
+                         decode_responses=True, charset="utf-8")
 
     def test_database(self):
         return self.db.dbsize() > 0
