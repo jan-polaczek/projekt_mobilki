@@ -1,7 +1,12 @@
 from redis import Redis
 import os
 
-db = Redis(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'))
+if os.environ.get('REDIS_PASSWORD'):
+    db = Redis(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'),
+                 password=os.environ.get('REDIS_PASSWORD'), decode_responses=True, charset="utf-8")
+else:
+    db = Redis(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'),
+                 decode_responses=True, charset="utf-8")
 db.flushall()
 admin_data = {
     'username': 'admin',

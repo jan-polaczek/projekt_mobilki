@@ -22,8 +22,7 @@ class RedisDAO:
                 import db.init_redis
             print("Connected to Redis")
         except exceptions.ConnectionError:
-            print('Failed to connect to database')
-            quit()
+            print('Failed to connect to Redis')
 
     def register(self, user_data):
         username = user_data['username']
