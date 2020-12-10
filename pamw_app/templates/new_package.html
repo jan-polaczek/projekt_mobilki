@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}Nowa paczka{% endblock %}
+{% block content %}
+    <div class="text-center">
+        <form action="{{ url_for('packages') }}" method="POST">
+            <ul>
+                <li class="form-group my-3">
+                    <label for="receiver" class="sr-only">Nazwa adresata</label>
+                    <input type="text" id="receiver" name="receiver" class="form-control" placeholder="Nazwa adresata" required>
+                </li>
+                <li class="form-group my-3">
+                    <label for="cell" class="sr-only">Numer skrytki</label>
+                    <input type="text" id="cell" name="cell" class="form-control" placeholder="Numer skrytyki" required>
+                    <div class="form-info">Numer skrytki składa się z trzech dużych liter oznaczających skrót miasta, myślnika oraz dwóch lub trzech cyfr identyfikujących skrytkę, np. KRK-024.</div>
+                </li>
+                <li class="form-group my-3">
+                    <label for="size" class="sr-only">Rozmiar</label>
+                    <input type="text" id="size" name="size" class="form-control" placeholder="Rozmiar" required>
+                    <div class="form-info">Rozmiar przesyłki należy oznaczyć liczbą całkowitą oraz jednostką, np. 5 kg</div>
+                </li>
+                <li class="form-group my-3">
+                    <input type="submit" value="Utwórz" class="btn btn-primary">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}
