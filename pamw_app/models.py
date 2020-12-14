@@ -1,16 +1,10 @@
-from pamw_app import app
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import os
 import re
 import uuid
 
-mysql_user = os.environ.get('MYSQL_USER')
-mysql_password = os.environ.get('MYSQL_PASS')
-mysql_host = os.environ.get('MYSQL_HOST')
-mysql_db = os.environ.get('MYSQL_DB')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}/{mysql_db}'
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 
 def generate_uuid():
@@ -23,6 +17,7 @@ class User(db.Model):
     password = db.Column(db.String(60))
     username = db.Column(db.String(30))
     address = db.Column(db.String(100))
+    user_type = db.Column(db.String(10))
     packages = db.relationship('Package', backref='sender', lazy=True)
 
     def __init__(self, **kwargs):
@@ -43,6 +38,7 @@ class User(db.Model):
             'last_name': self.last_name,
             'username': self.username,
             'address': self.address,
+            'user_type': self.user_type,
             'packages': []
         }
         for package in self.packages:
@@ -50,10 +46,10 @@ class User(db.Model):
         return res
 
     @staticmethod
-    def authorize(username, password):
+    def authorize(username, password, api=False):
         user = User.query.filter_by(username=username).first()
-        if user is None or not user.check_password(password):
-            return False
+        if user is None or not user.check_password(password) or api and not user.user_type == 'driver':
+            return None
         else:
             return user
 
@@ -93,6 +89,8 @@ class User(db.Model):
         if User.check_username(kwargs.get('username'))[kwargs.get('username')] == 'unavailable':
             errors.append('Nazwa użytkownika zajęta')
 
+        user_data['user_type'] = kwargs.get('user_type')
+
         if len(errors) == 0:
             user = User(**user_data)
             db.session.add(user)
@@ -119,11 +117,15 @@ class User(db.Model):
 
 
 class Package(db.Model):
-    id = db.Column(db.String(36), primary_key=True, default=generate_uuid(), unique=True, nullable=False)
+    id = db.Column(db.String(36), primary_key=True, default=generate_uuid, unique=True, nullable=False)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     receiver = db.Column(db.String(100))
     cell = db.Column(db.String(7))
     size = db.Column(db.String(30))
+    status = db.Column(db.String(15))
+    def __init__(self, **kwargs):
+        self.status = 'Utworzona'
+        super().__init__(**kwargs)
 
     def __repr__(self):
         return f'Package: sender_id: {self.sender_id}, receiver: {self.receiver}'
@@ -134,12 +136,27 @@ class Package(db.Model):
             'sender_id': self.sender_id,
             'receiver': self.receiver,
             'cell': self.cell,
-            'size': self.size
+            'size': self.size,
+            'status': self.status
         }
     
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        if self.status == 'Utworzona':
+            db.session.delete(self)
+            db.session.commit()
+            return True
+        else:
+            return False
+
+    def increment_status(self):
+        statuses = ['Utworzona', 'Nadana', 'W drodze', 'Dostarczona', 'Odebrana']
+        current_status_idx = statuses.index(self.status)
+        if current_status_idx == len(statuses) - 1:
+            return False
+        else:
+            self.status = statuses[current_status_idx + 1]
+            db.session.commit()
+            return True
 
     @staticmethod
     def register(**kwargs):
@@ -169,7 +186,7 @@ class Package(db.Model):
 
 
 class Session(db.Model):
-    id = db.Column(db.String(36), primary_key=True, default=generate_uuid(), unique=True, nullable=False)
+    id = db.Column(db.String(36), primary_key=True, default=generate_uuid, unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User')
 
@@ -184,9 +201,3 @@ class Session(db.Model):
         db.session.commit()
         return s
 
-
-db.drop_all()        
-db.create_all()
-User.register(username='admin', first_name='Pan', last_name='Admin', password='password', address='Klasyfikowane')
-User.register(username='jan', first_name='Jan', last_name="Polaczek", password='password', address='ul. Ulica 1/23 01-001 Warszawa')
-p = Package.register(sender_id = 1, receiver='Odbiorca', cell='WAW-001', size='5kg')

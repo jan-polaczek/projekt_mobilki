@@ -2,7 +2,7 @@
 {% block title %}Nowa paczka{% endblock %}
 {% block content %}
     <div class="text-center">
-        <form action="{{ url_for('packages') }}" method="POST">
+        <form action="{{ url_for('web_bp.packages') }}" method="POST">
             <ul>
                 <li class="form-group my-3">
                     <label for="receiver" class="sr-only">Nazwa adresata</label>

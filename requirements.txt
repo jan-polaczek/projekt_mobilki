@@ -1,9 +1,10 @@
 Flask
 gunicorn
-redis
 python-dotenv
 bcrypt
-pyopenssl
 flask_sqlalchemy
-flask_hal
 pymysql
+flask_restful
+flask-marshmallow
+marshmallow-sqlalchemy
+flask_jwt

@@ -5,6 +5,6 @@ setup(
     packages=['pamw_app'],
     include_package_data=True,
     install_requires=[
-        'flask',
+        'flask', 'python-dotenv', 'bcrypt', 'flask_sqlalchemy', 'pymysql', 'flask_restful', 'flask-marshmallow', 'marshmallow-sqlalchemy', 'flask_jwt'
     ],
 )
