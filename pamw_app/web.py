@@ -7,6 +7,7 @@ import os
 web_bp = Blueprint('web_bp', __name__,
                         template_folder='templates')
 
+
 @web_bp.context_processor
 def session_info():
     logged_in = 'sid' in session
@@ -20,6 +21,7 @@ def session_info():
     else:
         user = None
     return dict(logged_in=logged_in, user=user)
+
 
 @web_bp.route('/')
 def index():

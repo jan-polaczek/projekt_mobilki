@@ -10,6 +10,7 @@ db = SQLAlchemy()
 def generate_uuid():
     return str(uuid.uuid4())
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(30))
@@ -123,6 +124,7 @@ class Package(db.Model):
     cell = db.Column(db.String(7))
     size = db.Column(db.String(30))
     status = db.Column(db.String(15))
+
     def __init__(self, **kwargs):
         self.status = 'Utworzona'
         super().__init__(**kwargs)

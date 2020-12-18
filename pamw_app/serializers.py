@@ -4,6 +4,7 @@ from pamw_app.models import Package, User
 
 ma = Marshmallow()
 
+
 class PackageSerializer(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Package

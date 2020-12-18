@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, abort, Response, jsonify
-from flask_restful import Api, Resource, url_for
-from flask_jwt import JWT, jwt_required, current_identity
+from flask import Blueprint
+from flask_restful import Api, Resource
+from flask_jwt import JWT, jwt_required
 from pamw_app.serializers import PackageSerializer, UserSerializer
 import pamw_app.models as models
 
