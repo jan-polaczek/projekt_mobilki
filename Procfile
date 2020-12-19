@@ -1,1 +1,1 @@
-web: gunicorn pamw_app:pamw_app
+web: gunicorn pamw_app:app
