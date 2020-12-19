@@ -12,6 +12,7 @@ packages_serializer = PackageSerializer(many=True)
 
 user_serializer = UserSerializer()
 
+
 def api_authenticate(username, password):
     return models.User.authorize(username, password, api=True)
 
@@ -20,7 +21,14 @@ def api_identity(payload):
     user_id = payload['identity']
     return models.User.query.get(user_id)
 
+
 jwt = JWT(authentication_handler=api_authenticate, identity_handler=api_identity)
+
+
+@jwt.jwt_error_handler
+def jwt_error_handler(e):
+    return {'message': 'Token has expired'}, 401
+
 
 class PackageList(Resource):
     @jwt_required()

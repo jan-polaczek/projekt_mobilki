@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
-import os
 import re
 import uuid
+
+from sqlalchemy.ext.hybrid import hybrid_property
 
 db = SQLAlchemy()
 
@@ -45,6 +46,10 @@ class User(db.Model):
         for package in self.packages:
             res['packages'].append(package.as_dict())
         return res
+
+    @hybrid_property
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
 
     @staticmethod
     def authorize(username, password, api=False):
@@ -123,10 +128,11 @@ class Package(db.Model):
     receiver = db.Column(db.String(100))
     cell = db.Column(db.String(7))
     size = db.Column(db.String(30))
-    status = db.Column(db.String(15))
+    status = db.Column(db.String(20))
 
     def __init__(self, **kwargs):
-        self.status = 'Utworzona'
+        if not kwargs.get('status'):
+            self.status = 'Utworzona etykieta'
         super().__init__(**kwargs)
 
     def __repr__(self):
@@ -143,7 +149,7 @@ class Package(db.Model):
         }
     
     def delete(self):
-        if self.status == 'Utworzona':
+        if self.status == 'Utworzona etykieta':
             db.session.delete(self)
             db.session.commit()
             return True
@@ -151,7 +157,7 @@ class Package(db.Model):
             return False
 
     def increment_status(self):
-        statuses = ['Utworzona', 'Nadana', 'W drodze', 'Dostarczona', 'Odebrana']
+        statuses = ['Utworzona etykieta', 'Nadana', 'W drodze', 'Dostarczona', 'Odebrana']
         current_status_idx = statuses.index(self.status)
         if current_status_idx == len(statuses) - 1:
             return False

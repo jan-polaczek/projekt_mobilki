@@ -1,11 +1,12 @@
-from flask import Blueprint, render_template, send_from_directory, request, redirect, jsonify, flash, session, url_for, \
+from flask import Blueprint, render_template, request, redirect, jsonify, flash, session, url_for, \
     Response
 import pamw_app.models as models
 import datetime
-import os
+
+from pamw_app.utils import separate_array_by_key
 
 web_bp = Blueprint('web_bp', __name__,
-                        template_folder='templates')
+                   template_folder='templates')
 
 
 @web_bp.context_processor
@@ -49,11 +50,11 @@ def logout():
 def authorize():
     username = request.form.get('username')
     password = request.form.get('password')
-    if models.User.authorize(username, password) is None:
+    user = models.User.authorize(username, password)
+    if user is None or user.user_type != 'sender':
         flash('Niewłaściwa nazwa użytkownika i/lub hasło!')
         return redirect('/sender/login')
     else:
-        user = models.User.query.filter_by(username=username).first()
         ses = models.Session.register(user_id=user.id)
         session['sid'] = ses.id
         session['timestamp'] = datetime.datetime.now().timestamp()
@@ -82,15 +83,16 @@ def packages():
     sid = session.get('sid')
     if sid is not None:
         user = models.Session.query.get(sid).user
-        user_packages = user.packages
     if request.method == 'GET':
         if sid is None:
             return redirect(url_for('web_bp.index'))
-        return render_template('packages.html', packages=user_packages)
+        user_packages_all = user.packages
+        user_package_labels, user_packages = separate_array_by_key(user_packages_all, 'status', 'Utworzona etykieta')
+        return render_template('packages.html', packages=user_packages, labels=user_package_labels)
     elif request.method == 'POST':
         if sid is None:
             return Response(status=401)
-        
+
         package_data = {
             'sender_id': user.id,
             'receiver': request.form.get('receiver'),

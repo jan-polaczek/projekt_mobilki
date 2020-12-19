@@ -1,18 +1,17 @@
 import os
-import re
-import uuid
+import json
 import click
-from flask import Flask, render_template, send_from_directory, request, redirect, jsonify, flash, session, url_for, \
-    Response
+from datetime import timedelta
+from flask import Flask, send_from_directory
 from pamw_app.api import api_bp as api_bp, jwt as jwt
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from pamw_app.web import web_bp as web_bp
 from pamw_app.serializers import ma as ma
 import pamw_app.models as models
 
 app = Flask(__name__)
 cors = CORS(app)
-# nie definiuję czasu ważności JWT, bo domyślnie jest on dość krótki (5 minut)
+
 app.config.update(
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,
@@ -21,6 +20,7 @@ app.config.update(
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         JWT_AUTH_URL_RULE='/api/auth/',
         JWT_AUTH_HEADER_PREFIX='BEARER',
+        JWT_EXPIRATION_DELTA=timedelta(minutes=15),
         CORS_ALLOW_HEADERS='*',
         CORS_METHODS='*',
         CORS_ORIGINS='*'
@@ -49,7 +49,13 @@ def favicon():
 
 
 def load_data(path):
-    with open(path, 'r') as file:
+    with open(path, 'r', encoding='utf-8') as file:
+        data_string = file.read()
+    data = json.loads(data_string)
+    for user in data['users']:
+        models.User.register(**user)
+    for package in data['packages']:
+        models.Package.register(**package)
 
 
 if __name__ == '__main__':
