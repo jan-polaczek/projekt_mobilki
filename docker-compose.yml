@@ -11,3 +11,5 @@ services:
     environment:
       - MYSQL_DATABASE=pamw
       - MYSQL_ROOT_PASSWORD=root
+    security_opt:
+      - seccomp:unconfined
