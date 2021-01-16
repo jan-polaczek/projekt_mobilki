@@ -16,7 +16,11 @@
     <a class="nav-item nav-link" href="/">Strona główna</a>
     {% if logged_in %}
         <a class="nav-item nav-link" href="/sender/dashboard">Moje etykiety i paczki</a>
-        <a class="nav-item nav-link" href="/sender/logout">Wyloguj</a>
+        {% if oauth %}
+            <a class="nav-item nav-link" href="/oauth/logout">Wyloguj</a>
+        {% else %}
+            <a class="nav-item nav-link" href="/sender/logout">Wyloguj</a>
+        {% endif %}
     {% else %}
         <a class="nav-item nav-link" href="/sender/sign-up">Rejestracja</a>
         <a class="nav-item nav-link" href="/sender/login">Logowanie</a>

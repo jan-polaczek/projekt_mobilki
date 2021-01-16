@@ -15,13 +15,16 @@ def session_info():
     if logged_in:
         try:
             user = models.Session.query.get(session['sid']).user.as_dict()
+            oauth = session['oauth']
         except TypeError:
             user = None
             logged_in = False
+            oauth = False
             session.clear()
     else:
         user = None
-    return dict(logged_in=logged_in, user=user)
+        oauth = False
+    return dict(logged_in=logged_in, user=user, oauth=oauth)
 
 
 @web_bp.route('/')
@@ -58,6 +61,7 @@ def authorize():
         ses = models.Session.register(user_id=user.id)
         session['sid'] = ses.id
         session['timestamp'] = datetime.datetime.now().timestamp()
+        session['oauth'] = False
         return redirect(url_for('web_bp.index'))
 
 

@@ -11,6 +11,7 @@ form {
 
 ul {
     list-style: none;
+    padding: 0;
 }
 
 .delete-package-button:hover {

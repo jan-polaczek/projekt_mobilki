@@ -13,4 +13,4 @@ flask_cors
 click
 sqlalchemy
 pyOpenSSL
-
+authlib

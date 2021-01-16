@@ -14,12 +14,14 @@ def generate_uuid():
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    oauth_id = db.Column(db.String(50), unique=True)
     first_name = db.Column(db.String(30))
     last_name = db.Column(db.String(30))
     password = db.Column(db.String(60))
     username = db.Column(db.String(30))
     address = db.Column(db.String(100))
     user_type = db.Column(db.String(10))
+    oauth = db.Column(db.Boolean(), default=False)
     packages = db.relationship('Package', backref='sender', lazy=True)
 
     def __init__(self, **kwargs):
@@ -54,7 +56,7 @@ class User(db.Model):
     @staticmethod
     def authorize(username, password, api=False):
         user = User.query.filter_by(username=username).first()
-        if user is None or not user.check_password(password) or api and not user.user_type == 'driver':
+        if user is None or user.oauth or not user.check_password(password) or api and not user.user_type == 'driver':
             return None
         else:
             return user
@@ -76,8 +78,8 @@ class User(db.Model):
             user_data['username'] = kwargs.get('username')
         else:
             errors.append('Błędna nazwa użytkownika')
-        if User.is_valid('password', kwargs.get('password', '')):
-            user_data['password'] = kwargs.get('password')
+        if User.is_valid('password', kwargs.get('password', '')) or kwargs.get('oauth', False):
+            user_data['password'] = kwargs.get('password', '')
         else:
             errors.append('Błędne hasło')
         if User.is_valid('first_name', kwargs.get('first_name', '')):

@@ -7,6 +7,7 @@ from pamw_app.api import api_bp as api_bp, jwt as jwt
 from flask_cors import CORS
 from pamw_app.web import web_bp as web_bp
 from pamw_app.serializers import ma as ma
+from pamw_app.oauth import oauth as oauth, oauth_bp as oauth_bp
 import pamw_app.models as models
 
 app = Flask(__name__)
@@ -29,8 +30,10 @@ app.config.update(
 models.db.init_app(app)
 ma.init_app(app)
 jwt.init_app(app)
+oauth.init_app(app)
 app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(web_bp, url_prefix='/')
+app.register_blueprint(oauth_bp, url_prefix='/oauth')
 
 
 @app.cli.command()

@@ -4,17 +4,22 @@
      <div class="text-center">
         <h2>Zaloguj się</h2>
         <form action="authorize" method="post" class="text-center w-50" enctype="multipart/form-data">
-        <ul>
-            <li class="form-group my-3">
-                <label for="username" class="sr-only">Nazwa użytkownika</label>
-                <input type="text" id="username" name="username" autocomplete="username" class="form-control" placeholder="Nazwa użytkownika" required>
-            </li>
-            <li class="form-group my-3">
-                <label for="password" class="sr-only">Hasło</label>
-                <input type="password" id="password" name="password" autocomplete="password" class="form-control" placeholder="Hasło" required>
-            </li>
-            <input type="submit" value="Zaloguj" class="btn btn-primary">
-        </ul>
+            <ul>
+                <li class="form-group my-3">
+                    <label for="username" class="sr-only">Nazwa użytkownika</label>
+                    <input type="text" id="username" name="username" autocomplete="username" class="form-control" placeholder="Nazwa użytkownika" required>
+                </li>
+                <li class="form-group my-3">
+                    <label for="password" class="sr-only">Hasło</label>
+                    <input type="password" id="password" name="password" autocomplete="password" class="form-control" placeholder="Hasło" required>
+                </li>
+                <input type="submit" value="Zaloguj" class="btn btn-primary">
+            </ul>
         </form>
+         <div>
+             <a href="{{ url_for('oauth_bp.login') }}">
+                <button class="btn btn-secondary">Zaloguj przez auth0</button>
+            </a>
+         </div>
     </div>
 {% endblock %}
