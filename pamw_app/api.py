@@ -25,6 +25,11 @@ def api_identity(payload):
 jwt = JWT(authentication_handler=api_authenticate, identity_handler=api_identity)
 
 
+def generate_notification(package):
+    content = f'Twoja przesyłka zaadresowana do: {package.receiver} otrzymała nowy status: {package.status}'
+    models.Notification.register(user_id=package.sender_id, content=content)
+
+
 @jwt.jwt_error_handler
 def jwt_error_handler(e):
     return {'message': 'Token has expired'}, 401
@@ -54,6 +59,7 @@ class Package(Resource):
         else:
             res = package.increment_status()
             if res:
+                generate_notification(package)
                 return {'message': 'Successfully set new status', 'status': package.status}, 200
             else:
                 return {'message': 'Cannot increment status any further'}, 400

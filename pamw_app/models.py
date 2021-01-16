@@ -2,10 +2,11 @@ from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import re
 import uuid
+from datetime import datetime
 
 from sqlalchemy.ext.hybrid import hybrid_property
 
-db = SQLAlchemy()
+db = SQLAlchemy(engine_options={'isolation_level': 'READ COMMITTED'})
 
 
 def generate_uuid():
@@ -211,3 +212,49 @@ class Session(db.Model):
         db.session.commit()
         return s
 
+
+class Notification(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime(), default=datetime.now)
+    read = db.Column(db.Boolean, default=False)
+
+    user = db.relationship('User')
+
+    def mark_as_read(self):
+        self.read = True
+        db.session.commit()
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'content': self.content,
+            'timestamp': self.timestamp,
+            'read': self.read
+        }
+
+    @staticmethod
+    def many_as_dict(notifications):
+        res = []
+        for notification in notifications:
+            res.append(notification.as_dict())
+        return {'notifications': res}
+
+    @staticmethod
+    def register(**kwargs):
+        n = Notification(**kwargs)
+        db.session.add(n)
+        db.session.commit()
+        return n
+
+    @staticmethod
+    def get_unread_notifications_for_user(user_id):
+        return Notification.query.filter_by(user_id=user_id, read=False).all()
+
+    @staticmethod
+    def mark_many_as_read(notifications):
+        for notification in notifications:
+            notification.read = True
+        db.session.commit()

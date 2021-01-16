@@ -1,12 +1,24 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, flash, session, url_for, \
-    Response
+    Response, make_response
 import pamw_app.models as models
+from functools import update_wrapper
+import time
 import datetime
 
 from pamw_app.utils import separate_array_by_key
 
 web_bp = Blueprint('web_bp', __name__,
                    template_folder='templates')
+
+
+def protected(fn):
+    def wrapped_function(*args, **kwargs):
+        sid = session.get('sid')
+        if sid is None:
+            return "Unauthorized", 401
+        kwargs['user'] = models.Session.query.get(session['sid']).user
+        return fn(*args, **kwargs)
+    return update_wrapper(wrapped_function, fn)
 
 
 @web_bp.context_processor
@@ -83,20 +95,15 @@ def check_username():
 
 
 @web_bp.route('/sender/dashboard', methods=['GET', 'POST'])
-def packages():
-    sid = session.get('sid')
-    if sid is not None:
-        user = models.Session.query.get(sid).user
+@protected
+def packages(**kwargs):
+    user = kwargs['user']
     if request.method == 'GET':
-        if sid is None:
-            return redirect(url_for('web_bp.index'))
         user_packages_all = user.packages
         user_package_labels, user_packages = separate_array_by_key(user_packages_all, 'status', 'Utworzona etykieta')
         return render_template('packages.html', packages=user_packages, labels=user_package_labels)
-    elif request.method == 'POST':
-        if sid is None:
-            return Response(status=401)
 
+    elif request.method == 'POST':
         package_data = {
             'sender_id': user.id,
             'receiver': request.form.get('receiver'),
@@ -111,9 +118,25 @@ def packages():
 
 
 @web_bp.route('/sender/dashboard/new')
-def new_package():
-    sid = session.get('sid')
-    if sid is None:
-        return redirect(url_for('web_bp.index'))
-    else:
-        return render_template('new_package.html')
+@protected
+def new_package(**kwargs):
+    return render_template('new_package.html')
+
+
+@web_bp.route('/notifications/subscribe')
+@protected
+def subscribe(**kwargs):
+    user = kwargs['user']
+    return poll_db(user)
+
+
+def poll_db(user):
+    for i in range(25):
+        time.sleep(1)
+        notifications = models.Notification.get_unread_notifications_for_user(user.id)
+        if len(notifications) > 0:
+            content = models.Notification.many_as_dict(notifications)
+            models.Notification.mark_many_as_read(notifications)
+            resp = make_response(content, 200)
+            return resp
+    return '', 404
